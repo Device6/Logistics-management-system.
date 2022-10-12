@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shw.dao.UserDao">
+    <resultMap id="baseResultMap" type="com.shw.entity.User">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="role" property="role" jdbcType="INTEGER"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="realname" property="realname" jdbcType="VARCHAR"/>
+        <result column="age" property="age" jdbcType="INTEGER"/>
+        <result column="gender" property="gender" jdbcType="VARCHAR"/>
+        <result column="creditnumber" property="creditnumber" jdbcType="VARCHAR"/>
+        <result column="telephone" property="telephone" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="normal">
+        select id,role,username,password,realname,age,gender,creditnumber,telephone,address from user
+    </sql>
+
+    <sql id="consignee">
+        select id,uid,name,address,phone from consignee
+    </sql>
+
+    <sql id="postStation">
+        select pid,role,account,password,psname,telephone,psaddress from postStation
+    </sql>
+
+
+    <insert id="insertUser" parameterType="User" >
+        insert into user(username,password) values(#{username},#{password})
+    </insert>
+
+    <select id="userloginIn" resultType="User">
+        <include refid="normal" />
+        where username = #{username} and password = #{password}
+    </select>
+
+    <update id="updatePass" >
+        update user set password = #{password} where id = #{id}
+    </update>
+
+    <update id="updateInfo" parameterType="User">
+        update user set
+        <if test="realname != null">
+            realname = #{realname}
+        </if>
+        <if test="age != null">
+            ,age = #{age}
+        </if>
+        <if test="gender != null">
+            ,gender = #{gender}
+        </if>
+        <if test="creditnumber != null">
+            ,creditnumber = #{creditnumber}
+        </if>
+        <if test="telephone != null">
+            ,telephone = #{telephone}
+        </if>
+        <if test="address != null">
+            ,address = #{address}
+        </if>
+        where id = #{id}
+    </update>
+
+    <select id="selectUserById" resultMap="baseResultMap" parameterType="java.lang.Integer">
+        <include refid="normal"/>
+        where id = #{id}
+    </select>
+
+    <!--通过用户名查找-->
+    <select id="selectUserByUsername" parameterType="string" resultType="User">
+        <include refid="normal"></include>
+        where username = #{username}
+    </select>
+
+    <select id="selectPass" parameterType="java.lang.Integer" resultType="java.lang.String">
+        select password from user where id = #{id}
+    </select>
+
+    <select id="selectAllStations" resultType="PostStation" >
+        <include refid="postStation" />
+    </select>
+
+    <select id="selectStationByName" parameterType="java.lang.String" resultType="PostStation">
+        select pid,psname,telephone,psaddress from postStation
+        where psname = #{psname}
+    </select>
+
+    <select id="selectStationById" parameterType="java.lang.Integer" resultType="PostStation">
+        select pid,psname,telephone,psaddress from postStation
+        where pid = #{pid}
+    </select>
+
+    <insert id="postOrder" parameterType="OrderEntity" >
+        insert into order_test(oid,price,uid,cid,pid,enterprise)
+        values(#{oid},#{price},#{uid},#{cid},#{pid},#{enterprise})
+    </insert>
+
+    <update id="payTheOrder" parameterType="string">
+        update order_test set paid = '已支付' where oid = #{oid}
+    </update>
+
+    <insert id="addConsignee" parameterType="Consignee">
+        insert into consignee(uid,name,phone,address) values (#{uid},#{name},#{phone},#{address})
+    </insert>
+
+    <!--删除收件人-->
+    <delete id="deleteConsignee" parameterType="int">
+        delete from consignee where id = #{id}
+    </delete>
+
+    <!--修改收件人-->
+    <update id="updateConsignee" parameterType="Consignee">
+        update consignee set
+        <if test="#{name} != null">
+            name = #{name},
+        </if>
+        <if test="#{phone} != null">
+            phone = #{phone},
+        </if>
+        <if test="#{address} != null">
+            address = #{address}
+        </if>
+        where id = #{id}
+    </update>
+
+    <select id="queryAllConsignees" resultType="Consignee" parameterType="java.lang.Integer">
+        select id,uid,name,address,phone from consignee where uid = #{uid}
+    </select>
+
+    <select id="queryConsigneeById" resultType="Consignee">
+        <include refid="consignee" />
+         where id = #{cid}
+    </select>
+
+    <resultMap id="myOrder" type="Order">
+        <id property="oid" column="oid" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="VARCHAR"/>
+        <result property="createtime" column="createtime" jdbcType="TIMESTAMP"/>
+        <result property="state" column="state" jdbcType="VARCHAR"/>
+        <association property="consignor" column="uid" javaType="User" select="com.shw.dao.UserDao.selectUserById"/>
+        <association property="consignee" column="cid" javaType="Consignee" select="com.shw.dao.UserDao.queryConsigneeById"/>
+        <association property="postStation" column="pid" javaType="PostStation" select="com.shw.dao.UserDao.selectStationById"/>
+        <association property="enterprise" column="enterprise" javaType="Enterprise" select="com.shw.dao.AdminDao.queryEnterpriseByName"/>
+    </resultMap>
+
+    <!--查询当前用户所有订单-->
+    <select id="queryOrders" resultMap="myOrder" parameterType="java.lang.Integer">
+        select * from order_test where uid = #{uid}
+    </select>
+
+    <select id="queryOrders2" resultMap="myOrder" parameterType="int">
+        select * from order_test where uid = #{uid} and state != '已完成'
+    </select>
+
+    <select id="queryOrders3" resultMap="myOrder" parameterType="int">
+        select * from order_test where uid = #{uid} and state = '已完成'
+    </select>
+
+    <!--通过订单号查询订单-->
+    <select id="queryOrderByOid" parameterType="java.lang.String" resultMap="myOrder">
+        select * from order_test where oid = #{oid}
+    </select>
+
+
+
+</mapper>

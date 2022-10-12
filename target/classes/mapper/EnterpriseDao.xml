@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shw.dao.EnterpriseDao">
+
+    <sql id="poststation">
+        select pid,psname,telephone,psaddress from poststation
+    </sql>
+
+    <!--查询合作站点-->
+    <select id="queryOperators" parameterType="string" resultType="PostStation">
+        select pid,psname,telephone,psaddress from poststation p join pe_relation pe on p.psname = pe.pname
+        where pe.ename = #{ename}
+    </select>
+
+    <!--查询企业负责订单-->
+    <select id="queryOrders" parameterType="string" resultMap="com.shw.dao.UserDao.myOrder">
+        select * from order_test where enterprise = #{ename}
+    </select>
+
+    <!--查询所有运输员-->
+    <select id="queryAllDrivers" resultType="Driver" parameterType="string">
+        select id,realname,phone from driver where enterprise = #{ename}
+    </select>
+
+    <insert id="distributeOrders">
+        insert into order_driver values (#{oid},#{address},#{driverId})
+    </insert>
+
+
+</mapper>

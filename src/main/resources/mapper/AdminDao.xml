@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shw.dao.AdminDao">
+    <sql id="nolmal">
+        select id,role,adminname,password from admin
+    </sql>
+
+    <select id="adminLoginIn" resultType="Admin">
+        <include refid="nolmal" />
+        where adminname = #{map.adminname} and password = #{map.password}
+    </select>
+
+    <!--查询管理员-->
+    <select id="queryAdmin" resultType="Admin" parameterType="int">
+        <include refid="nolmal"></include>
+        where id = #{id}
+    </select>
+
+    <select id="queryAdminName" parameterType="string" resultType="int">
+        select count(*) from admin where adminname = #{adminname}
+    </select>
+
+    <update id="updatePass" >
+        update admin set password = #{password} where id = #{id}
+    </update>
+
+    <insert id="addAdmin" parameterType="Admin">
+        insert into admin(adminname,password) values (#{adminname},#{password})
+    </insert>
+
+    <select id="queryAllUsers" resultType="User">
+        select id,username,realname,age,gender,telephone,address from user
+    </select>
+
+    <!--添加驿站-->
+    <insert id="addPostStation" parameterType="PostStation">
+        insert into poststation(account,password,psname,telephone,psaddress) values (#{account},#{password},#{psname},#{telephone},#{psaddress})
+    </insert>
+
+    <!--根据id删除驿站-->
+    <delete id="deletePostStation">
+        delete from poststation where pid = #{pid}
+    </delete>
+
+    <!--查询所有驿站-->
+    <select id="queryAllPostStations" resultType="PostStation">
+        select pid,psname,telephone,psaddress from poststation
+    </select>
+
+    <select id="queryAllOrders" resultMap="com.shw.dao.UserDao.myOrder">
+        select * from order_test
+    </select>
+
+    <select id="queryAllOrdersPaid" resultMap="com.shw.dao.UserDao.myOrder">
+        select * from order_test where paid = '已支付'
+    </select>
+
+    <select id="queryOrdersByPid" resultMap="com.shw.dao.UserDao.myOrder">
+        select * from order_test where paid = '已支付' and pid = #{pid}
+    </select>
+
+    <update id="updateOrder" >
+        update order_test set state = #{state} where oid = #{oid}
+    </update>
+
+    <select id="queryOrdersByEnter" resultMap="com.shw.dao.UserDao.myOrder">
+        select * from order_test where paid = '已支付' and enterprise = #{enterprise}
+    </select>
+
+    <!--添加企业-->
+    <insert id="addEnterprise" parameterType="Enterprise">
+        insert into enterprise(name,phone,address) values (#{name},#{phone},#{address})
+    </insert>
+
+    <!--删除企业-->
+    <delete id="deleteEnterprise">
+        delete from enterprise where name = #{ename}
+    </delete>
+
+    <resultMap id="enterprise" type="Enterprise">
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+    </resultMap>
+
+    <!--根据名称查找相关企业-->
+    <select id="queryEnterpriseByName" parameterType="string" resultType="Enterprise">
+        select name,phone,address from enterprise where name = #{ename}
+    </select>
+
+    <select id="queryAllEnterprises" resultType="Enterprise">
+        select name,phone,address from enterprise
+    </select>
+
+    <!--查询企业的合作站点-->
+    <select id="pe_Relation" resultType="PostStation" parameterType="string">
+        select pid,psname,telephone,psaddress from poststation p join pe_relation pe on p.psname = pe.pname where pe.ename = #{ename}
+    </select>
+
+    <!--查询驿站的合作企业-->
+    <select id="pe_Relation2" parameterType="string" resultType="Enterprise">
+        select name,phone,address from enterprise e join pe_relation pe on e.name = pe.ename where pe.pname = #{pname}
+    </select>
+
+
+
+    <!--查询所有司机-->
+    <resultMap id="driver" type="Driver">
+        <result property="id" column="id"/>
+        <result property="password" column="password"/>
+        <result property="realname" column="realname"/>
+        <result property="phone" column="phone"/>
+        <association property="enterprise" column="enterprise" javaType="Enterprise" select="queryEnterpriseByName"/>
+    </resultMap>
+
+    <select id="queryAllDrivers" resultMap="driver">
+        select * from driver
+    </select>
+
+    <!--查询企业旗下所有运输员-->
+    <select id="queryDriversByEnterprise" resultMap="driver" parameterType="string">
+        select * from driver where enterprise = #{ename}
+    </select>
+
+
+</mapper>

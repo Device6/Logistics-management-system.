@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shw.dao.PostStationDao">
+
+    <sql id="postStation">
+        select pid,account,password,psname,telephone,psaddress from poststation
+    </sql>
+
+    <sql id="order">
+        select oid,price,paid,createtime,state from order_test
+    </sql>
+
+    <!--站点登录-->
+    <select id="postLoginIn" parameterType="PostStation" resultType="PostStation">
+        <include refid="postStation"></include>
+        where account = #{account} and password = #{password}
+    </select>
+
+    <select id="queryAllOrdersPaid" parameterType="int" resultMap="com.shw.dao.UserDao.myOrder">
+        select * from order_test where pid = #{pid} and paid = '已支付'
+    </select>
+
+    <!--查询未处理订单-->
+    <select id="queryOrdersNotProcessed" resultMap="com.shw.dao.UserDao.myOrder" parameterType="int">
+        select * from order_test
+        where pid = #{pid} and paid = '已支付' and state = '等待处理'
+    </select>
+
+    <!--查询已处理订单-->
+    <select id="queryOrdersProcessed" parameterType="int" resultMap="com.shw.dao.UserDao.myOrder">
+        select * from order_test
+        where pid = #{pid} and paid = '已支付' and state != '等待处理'
+    </select>
+
+    <!--更新订单信息-->
+    <update id="updateOrder" parameterType="Order">
+        update order_test set state = #{state} where oid = #{oid}
+    </update>
+
+</mapper>

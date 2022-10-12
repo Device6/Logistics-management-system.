@@ -1,0 +1,127 @@
+body{
+    margin: 0;
+    height: 880px;
+    /*background: url("../images/veer-309357651.jpg") no-repeat;*/
+    /*background-size: cover;*/
+}
+.el-col {
+    border-radius: 4px;
+}
+.bg-purple-dark {
+    background: #99a9bf;
+}
+.bg-purple {
+    background: #d3dce6;
+}
+.bg-purple-light {
+    background: #e5e9f2;
+}
+.grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+}
+#nav{
+    height: 120px;
+
+}
+#nav-background{
+    top: 10px;
+    left: 500px;
+    width: 900px;
+    height: 100px;
+    float: left;
+    position: relative;
+    background: url("../images/物流.webp") no-repeat;
+    background-size: 40% 100%;
+}
+#nav-content{
+    width: 460px;
+    height: 40px;
+    left: 420px;
+    top: 60px;
+    float: left;
+    position: relative;
+}
+#center{
+    margin: 0px;
+    width: auto;
+    height: 360px;
+    margin-bottom: 20px;
+    background: url("../images/首页.jpeg") no-repeat;
+    background-size: 100% 100%;
+}
+#loginLeft{
+    margin: 0px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    height: 360px;
+    width: 1350px;
+    position: relative;
+    float: left;
+}
+#loginRight{
+    margin: 0px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    height: 360px;
+    width: 230px;
+    position: relative;
+    float: left;
+}
+#loginArea{
+    margin: 0;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    height: 340px;
+    width: 280px;
+    position: relative;
+    float: left;
+    border: 1px solid #eeff5e;
+    background-color: #eef3ef;
+    opacity: 0.9;
+}
+#loginArea-methods{
+    height: 80px;
+}
+#loginArea-moreActions{
+    margin: 0;
+    margin-left: 20px;
+    height: 60px;
+    width: 240px;
+    top: 35px;
+    position: relative;
+}
+#loginArea-moreActions span a{
+    text-decoration: none;
+    color: #a9aeaa ;
+    font-size: 12px;
+    text-align: right;
+}
+#bottom{
+    width: 1903px ;
+    height: 450px;
+    top: 445px;
+    background-color: #182840;
+    position: absolute;
+}
+
+#bottom-container{
+    height: 280px;
+    width: 1000px;
+    top: 70px;
+    left: 450px;
+    float: left;
+    position: relative;
+}
+#bottom-container li{
+    margin-bottom: 30px;
+}
+
+#bottom-container li:first-child{
+    margin-bottom: 50px;
+}
+#bottom-container a{
+    text-decoration: none;
+    font-size: 16px;
+    color: #e3e3e3;
+}
